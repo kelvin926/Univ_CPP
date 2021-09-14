@@ -1,21 +1,20 @@
 #include <iostream>
-#define key 1       // 암호화 키는 1로 설정
 using namespace std;
 
-void encry(char *en)                          // 인자 전달 받음
+void change(int *a, int *b)         // a와 b 포인터로 받는다
 {
-    cout << "평문 : " << en << endl;           // 평문 출력
-    for(int i = 0 ; i < strlen(en) ; i++)  
-    {
-        if(en[i] == ' ')    continue;         // 공백일 경우 암호화 안 함
-        else                en[i] += key;     // 공백이 아닐 경우 전부 암호화
-    }
-    cout << "암호화 : " << en << endl;          // 암호화 된 문장 출력
+    int tmp;        // tmp 생성
+    tmp = *b;       // tmp에 b 넣기
+    *b = *a;        // b에 a 넣기
+    *a = tmp;       // a에 tmp 넣기
 }
 
 int main()
 {
-    char str[] = {"THIS GONNA BE ENCRYTPED"}; // 암호화 될 문장
-    char *p = str;                            // 문자열 포인터
-    encry(p);                                 // 함수로 인자 전달
+    int a, b;       // 입력받은 두 정수를 저장할 변수
+    cout << "두 정수를 입력하세요 >> ";
+    cin >> a >> b; // 입력
+    cout << "입력한 수 : " << a << " " << b << endl; // 출력
+    change(&a, &b);                                // 함수 보내기
+    cout << "역전한 수 : " << a << " " << b << endl; // 재출력
 }
