@@ -20,7 +20,6 @@ int vehicle::getVal()                       // vehicle 클래스의 getVal 함�
     cost += (cost / 100) * 30;              // 지방교육세 30퍼센트 부과
 
     int    s = 100 - 5*(yl - 2);            // 차령이 3년부터 11년일 때 적용률을 나타내는 변수
-    cout << s;
     cost    /= 100;                         // 임시로 cost 값을 100으로 나눔
 
     if(yl <= 2)         cost *= 100;        // 차령이 2년 이하면 세금 감면 안됨
