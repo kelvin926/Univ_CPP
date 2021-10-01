@@ -45,12 +45,8 @@ inline void subbyte(int state[4][4])
     };
 
     for(int i = 0 ; i < 4 ; i++)
-    {
-        for(int k = 0 ; k < 4 ; k++)
-        {
-            state[i][k] = sbox[(state[i][k] / 16)][state[i][k] % 16];
-        }
-    }
+    for(int k = 0 ; k < 4 ; k++)
+    state[i][k] = sbox[(state[i][k] / 16)][state[i][k] % 16];
 }
 
 inline void shiftrows(int state[4][4])
@@ -75,7 +71,26 @@ inline void shiftrows(int state[4][4])
     state[3][2] = state[3][3];
     state[3][3] = temp[0];
 
- }
+}
+
+inline void mixcolumns(int state[4][4])
+{
+    int mix[4][4] = {
+    {2, 3, 1, 1},
+    {1, 2, 3, 1},
+    {1, 1, 2, 3},
+    {3, 1, 1, 2}
+    };
+    
+    prt(state);
+
+    int a = (state[1][0] * 2 % 0x100)^(state[1][0] * 3 % 0x100)^(state[2][0] * 1 % 0x100)^(state[3][0] * 1 % 0x100);
+
+    cout << bitset<8>(a) << endl;
+    cout << hex << a % 0x100;
+
+}
+
 int main()
 {
     int state[4][4] = {
@@ -111,6 +126,8 @@ int main()
     shiftrows(state);
     cout << "[1 라운드] ShiftRows" << endl;
     prt(state);
+
+    mixcolumns(state);
 
 
 }
