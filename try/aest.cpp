@@ -1,4 +1,5 @@
 #include <iostream>
+#define p(a) ((a << 1) ^ (((a >> 7) & 1) * 0x1b))
 using namespace std;
 
 inline void prt(int s[4][4])
@@ -18,30 +19,24 @@ inline void prt(int s[4][4])
 
 inline void mixcolumns(int state[4][4])
 {
+    unsigned char basic, axor, res;
     int mix[4][4] = {
-    {2, 3, 1, 1},
-    {1, 2, 3, 1},
-    {1, 1, 2, 3},
-    {3, 1, 1, 2}
-    };
+        {2, 3, 1, 1},
+        {1, 2, 3, 1},
+        {1, 1, 2, 3},
+        {3, 1, 1, 2}
+        };
     
-    int temp[4][4];
     for(int i = 0 ; i < 4 ; i++)
-    for(int k = 0 ; k < 4 ; k++)
-    temp[i][k] = state[i][k];
-
-    // 열이 2 3 1 1인 경우  
-    state[0][0] = ( (temp[0][0] << 1) ^ ((temp[1][0] << 1)^temp[1][0]) ^ temp[2][0] ^ temp[3][0] ) % 0x100;
-    state[0][1] = ( (temp[0][1] << 1) ^ ((temp[1][1] << 1)^temp[1][1]) ^ temp[2][1] ^ temp[3][1] ) % 0x100;
-    state[0][2] = ( (temp[0][2] << 1) ^ ((temp[1][2] << 1)^temp[1][2]) ^ temp[2][2] ^ temp[3][2] ) % 0x100;
-    state[0][3] = ( (temp[0][3] << 1) ^ ((temp[1][3] << 1)^temp[1][3]) ^ temp[2][3] ^ temp[3][3] ) % 0x100;
-    
-    // 열이 1 2 3 1인 경우
-    state[1][0] = ( temp[0][0] ^ (temp[1][0] << 1) ^ ((temp[3][0] << 1)^temp[3][0]) ^ temp[0][0] ) % 0x100;
-
-    // 열이 1 1 2 3인 경우
-    state[2][0] = ( temp[0][0] ^ temp[1][0] ^ (temp[2][0]^;
-    prt(state);
+    {
+        basic = state[0][i];  
+        axor = state[0][i] ^ state[1][i] ^ state[2][i] ^ state[3][i];   
+        res = state[0][i] ^ state[1][i];                                res = p(res);
+        state[0][i] ^= res ^ axor;  res = state[1][i] ^ state[2][i];    res = p(res);
+        state[1][i] ^= res ^ axor;  res = state[2][i] ^ state[3][i];    res = p(res);
+        state[2][i] ^= res ^ axor;  res = state[3][i] ^ basic;          res = p(res);
+        state[3][i] ^= res ^ axor;  
+    }  
 }
 
 int main()

@@ -1,4 +1,5 @@
 #include <iostream>
+#define p(a) ((a << 1) ^ (((a >> 7) & 1) * 0x1b))
 using namespace std;
 
 inline void prt(int s[4][4])
@@ -20,7 +21,7 @@ inline void addroundkey(int state[4][4], int key[4][4])
 {
     for(int i = 0 ; i < 4 ; i++)
     for(int k = 0 ; k < 4 ; k++)
-        state[i][k] += key[i][k];
+        state[i][k] = (state[i][k] + key[i][k]) % 0x100;
 }
 
 inline void subbyte(int state[4][4])
@@ -51,7 +52,7 @@ inline void subbyte(int state[4][4])
 
 inline void shiftrows(int state[4][4])
 {
-    int temp[2];
+    int temp[3];
     temp[0] = state[1][0];             // 2번째줄 1 shift
     state[1][0] = state[1][1];
     state[1][1] = state[1][2];
@@ -65,31 +66,37 @@ inline void shiftrows(int state[4][4])
     state[2][2] = temp[0];
     state[2][3] = temp[1];
 
-    temp[0] = state[3][0];           // 4번째줄 3 shift
-    state[3][0] = state[3][1];
-    state[3][1] = state[3][2];
-    state[3][2] = state[3][3];
-    state[3][3] = temp[0];
-
+    temp[0] = state[3][0];            // 4번째줄 3 shift
+    temp[1] = state[3][1];
+    temp[2] = state[3][2];
+    state[3][0] = state[3][3];
+    state[3][1] = temp[0];
+    state[3][2] = temp[1];
+    state[3][3] = temp[2];
 }
 
 inline void mixcolumns(int state[4][4])
 {
+    unsigned char basic, axor, res;
     int mix[4][4] = {
-    {2, 3, 1, 1},
-    {1, 2, 3, 1},
-    {1, 1, 2, 3},
-    {3, 1, 1, 2}
-    };
+        {2, 3, 1, 1},
+        {1, 2, 3, 1},
+        {1, 1, 2, 3},
+        {3, 1, 1, 2}
+        };
     
-    prt(state);
-
-    int a = (state[1][0] * 2 % 0x100)^(state[1][0] * 3 % 0x100)^(state[2][0] * 1 % 0x100)^(state[3][0] * 1 % 0x100);
-
-    cout << bitset<8>(a) << endl;
-    cout << hex << a % 0x100;
-
+    for(int i = 0 ; i < 4 ; i++)
+    {
+        basic = state[0][i];  
+        axor = state[0][i] ^ state[1][i] ^ state[2][i] ^ state[3][i];   
+        res = state[0][i] ^ state[1][i];                                res = p(res);
+        state[0][i] ^= res ^ axor;  res = state[1][i] ^ state[2][i];    res = p(res);
+        state[1][i] ^= res ^ axor;  res = state[2][i] ^ state[3][i];    res = p(res);
+        state[2][i] ^= res ^ axor;  res = state[3][i] ^ basic;          res = p(res);
+        state[3][i] ^= res ^ axor;  
+    }  
 }
+
 
 int main()
 {
@@ -106,6 +113,7 @@ int main()
     {0x0b, 0x13, 0x09, 0x09},
     {0x03, 0x09, 0x09, 0x09}
     };
+    unsigned char keybit;
 
     cout << "평문" <<endl;
     prt(state);
@@ -113,21 +121,50 @@ int main()
     cout << "키" <<endl;
     prt(key);
 
-    //                      ADD ROUND KEY [0 ROUND]
+    cout << "키 크기 입력 (128, 192, 256)>> ";
+    int keysize;
+    cin >> keysize;
+    char r;
+    if(keysize == 128)       r = 10;
+    else if(keysize == 192)  r = 12;
+    else if(keysize == 256)  r = 14;
+    else                    return 0;
+    //                      ADD  ROUND KEY [0 ROUND]
+    
+
 
     addroundkey(state, key);
     cout << "[0 라운드] AddRoundKey" << endl;
     prt(state);
 
-    subbyte(state);
-    cout << "[1 라운드] Subbyte" << endl;
-    prt(state);
+    for(int i = 1 ; i < r; i++)
+    {
+        subbyte(state);
+        cout << "[" << dec << i << " 라운드] Subbyte" << endl;
+        prt(state);
+        
+        shiftrows(state);
+        cout << "[" << dec << i << " 라운드] ShiftRows" << endl;
+        prt(state);
+
+        mixcolumns(state);
+        cout << "[" << dec << i << " 라운드] Mixcolumns" << endl;
+        prt(state);
+
+        addroundkey(state, key);
+        cout << "[" << dec << i << " 라운드] AddRoundKey" << endl;
+        prt(state);
+    }
     
+    subbyte(state);
+    cout << "[LAST 라운드] Subbyte" << endl;
+    prt(state);
+        
     shiftrows(state);
-    cout << "[1 라운드] ShiftRows" << endl;
+    cout << "[LAST 라운드] ShiftRows" << endl;
     prt(state);
 
-    mixcolumns(state);
-
-
+    addroundkey(state, key);
+    cout << "[LAST 라운드] AddRoundKey" << endl;
+    prt(state);
 }
