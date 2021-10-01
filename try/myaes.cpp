@@ -53,6 +53,29 @@ inline void subbyte(int state[4][4])
     }
 }
 
+inline void shiftrows(int state[4][4])
+{
+    int temp[2];
+    temp[0] = state[1][0];             // 2번째줄 1 shift
+    state[1][0] = state[1][1];
+    state[1][1] = state[1][2];
+    state[1][2] = state[1][3];
+    state[1][3] = temp[0];
+
+    temp[0] = state[2][0];            // 3번째줄 2 shift
+    temp[1] = state[2][1];
+    state[2][0] = state[2][2];
+    state[2][1] = state[2][3];
+    state[2][2] = temp[0];
+    state[2][3] = temp[1];
+
+    temp[0] = state[3][0];           // 4번째줄 3 shift
+    state[3][0] = state[3][1];
+    state[3][1] = state[3][2];
+    state[3][2] = state[3][3];
+    state[3][3] = temp[0];
+
+ }
 int main()
 {
     int state[4][4] = {
@@ -84,5 +107,10 @@ int main()
     subbyte(state);
     cout << "[1 라운드] Subbyte" << endl;
     prt(state);
+    
+    shiftrows(state);
+    cout << "[1 라운드] ShiftRows" << endl;
+    prt(state);
+
 
 }
