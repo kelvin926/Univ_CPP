@@ -64,6 +64,7 @@
         "iosfwd": "cpp",
         "istream": "cpp",
         "sstream": "cpp",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "iomanip": "cpp"
     }
 }

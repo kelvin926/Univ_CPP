@@ -97,7 +97,6 @@ inline void mixcolumns(int state[4][4])
     }  
 }
 
-
 int main()
 {
     int state[4][4] = {
