@@ -54,25 +54,22 @@ inline void shiftrows(int state[4][4])
 {
     int temp[3];
     temp[0] = state[1][0];             // 2번째줄 1 shift
-    state[1][0] = state[1][1];
-    state[1][1] = state[1][2];
-    state[1][2] = state[1][3];
+    for(int i = 0 ; i < 3 ; i++)
+    state[1][i] = state[1][i+1];
     state[1][3] = temp[0];
 
-    temp[0] = state[2][0];            // 3번째줄 2 shift
+    temp[0] = state[2][0];             // 3번째줄 2 shift
     temp[1] = state[2][1];
     state[2][0] = state[2][2];
     state[2][1] = state[2][3];
     state[2][2] = temp[0];
     state[2][3] = temp[1];
 
-    temp[0] = state[3][0];            // 4번째줄 3 shift
-    temp[1] = state[3][1];
-    temp[2] = state[3][2];
-    state[3][0] = state[3][3];
-    state[3][1] = temp[0];
-    state[3][2] = temp[1];
-    state[3][3] = temp[2];
+    for(int i = 0 ; i < 3 ; i++)      // 4번째줄 3 shift
+    temp[i] = state[3][i];
+    state[3][0] = state[3][3]; 
+    for(int i = 0 ; i < 3 ; i++)
+    state[3][i+1] = temp[i];
 }
 
 inline void mixcolumns(int state[4][4])
@@ -97,6 +94,48 @@ inline void mixcolumns(int state[4][4])
     }  
 }
 
+inline void keyexpansion(int state[4][4], int roundkey[4][4])
+{
+    int rcon[4][10] = {
+    {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36},
+    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    };
+
+    int backup_state[4][4];
+    int backup_roundkey[4][4];
+    for(int i = 0 ; i < 4 ; i++)
+    for(int k = 0 ; k < 4 ; k++)
+    {
+        backup_state[i][k] = state[i][k];         // state 업
+        backup_roundkey[i][k] = roundkey[i][k];   // roundkey 백업
+        state[i][k] = roundkey[i][k];             // state 덮기
+    }
+
+    int rotword_temp = state[0][3];         // RotWord 과정
+    for(int i = 0 ; i < 3 ; i++)
+    state[i][3] = state[i+1][3];
+    state[3][3] = rotword_temp;
+
+    subbyte(state);                         // SubWord 과정
+    for(int i = 0 ; i < 4 ; i++)         
+    roundkey[i][3] = state[i][3];
+    
+    for(int i = 0 ; i < 4 ; i++)
+    roundkey[i][0] = state[i][3]^backup_roundkey[i][0]^rcon[i][0];
+
+    for(int i = 0 ; i < 3 ; i++)
+    for(int k = 0 ; k < 4 ; k++)
+    roundkey[k][i+1] = roundkey[k][i]^backup_roundkey[k][i+1]^rcon[i+1][k];
+
+
+    for(int i = 0 ; i < 4 ; i++)            // state 되돌리기
+    for(int k = 0 ; k < 4 ; k++)
+    state[i][k] = backup_state[i][k];
+
+} 
+
 int main()
 {
     int state[4][4] = {
@@ -104,14 +143,20 @@ int main()
     {0x02, 0x0e, 0x12, 0x13},
     {0x00, 0x13, 0x00, 0x00},
     {0x0d, 0x07, 0x0b, 0x18}
-    };
-    
+    };/*
     int key[4][4] = {
-    {0x08, 0x0e, 0x09, 0x09},
+    {0x08, 0x0e, 0x09, 0x09},   // main
     {0x0b, 0x08, 0x09, 0x09},
     {0x0b, 0x13, 0x09, 0x09},
     {0x03, 0x09, 0x09, 0x09}
-    };
+    }; */
+    
+    int key[4][4] = {
+    {0x2b, 0x28, 0xab, 0x09},   // check
+    {0x7e, 0xae, 0xf7, 0xcf},
+    {0x15, 0xd2, 0x15, 0x4f},
+    {0x16, 0xa6, 0x88, 0x3c}
+    }; 
     unsigned char keybit;
 
     cout << "평문" <<endl;
@@ -131,13 +176,17 @@ int main()
     //                      ADD  ROUND KEY [0 ROUND]
     
 
-
     addroundkey(state, key);
     cout << "[0 라운드] AddRoundKey" << endl;
     prt(state);
 
-    for(int i = 1 ; i < r; i++)
+    for(int i = 1 ; i < r ; i++) //*
     {
+
+        keyexpansion(state, key);
+        cout << "[" << dec << i << " 라운드] Key Ex" << endl;
+        prt(key);
+
         subbyte(state);
         cout << "[" << dec << i << " 라운드] Subbyte" << endl;
         prt(state);
