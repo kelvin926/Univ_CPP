@@ -143,20 +143,20 @@ int main()
     {0x02, 0x0e, 0x12, 0x13},
     {0x00, 0x13, 0x00, 0x00},
     {0x0d, 0x07, 0x0b, 0x18}
-    };/*
+    }; 
     int key[4][4] = {
     {0x08, 0x0e, 0x09, 0x09},   // main
     {0x0b, 0x08, 0x09, 0x09},
     {0x0b, 0x13, 0x09, 0x09},
     {0x03, 0x09, 0x09, 0x09}
-    }; */
-    
+    }; 
+    /*
     int key[4][4] = {
     {0x2b, 0x28, 0xab, 0x09},   // check
     {0x7e, 0xae, 0xf7, 0xcf},
     {0x15, 0xd2, 0x15, 0x4f},
     {0x16, 0xa6, 0x88, 0x3c}
-    }; 
+    }; */
     unsigned char keybit;
 
     cout << "평문" <<endl;
@@ -182,11 +182,10 @@ int main()
 
     for(int i = 1 ; i < r ; i++) //*
     {
-
         keyexpansion(state, key);
-        cout << "[" << dec << i << " 라운드] Key Ex" << endl;
+        cout << "[" << dec << i-1 << " 라운드] Key Ex" << endl;
         prt(key);
-
+        
         subbyte(state);
         cout << "[" << dec << i << " 라운드] Subbyte" << endl;
         prt(state);
