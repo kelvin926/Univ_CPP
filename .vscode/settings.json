@@ -66,5 +66,6 @@
         "sstream": "cpp",
         "stdexcept": "cpp",
         "iomanip": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }
