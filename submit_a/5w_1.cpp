@@ -4,7 +4,6 @@ using namespace std;
 
 class Person {
     string name;
-
 public:
     Person() { };
     Person(string name) { this->name = name; }

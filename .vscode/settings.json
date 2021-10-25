@@ -65,7 +65,10 @@
         "istream": "cpp",
         "sstream": "cpp",
         "stdexcept": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "deque": "cpp",
+        "fstream": "cpp",
+        "stack": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
