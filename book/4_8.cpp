@@ -24,7 +24,7 @@ int main()
         a[i].setRadius(temp_radius);
         if(a[i].getArea() > 100)
         big++;
-    }
+    }   
     
     cout << "면적이 100보다 큰 원은 " << big << "개 입니다" << endl;
     
