@@ -14,5 +14,5 @@ int main()
         printf("%d%d ", i, k);
     }
     puts("");
-    }
+    } 
 }
