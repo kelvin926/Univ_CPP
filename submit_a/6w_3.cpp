@@ -21,7 +21,7 @@ public:
 
 int main()
 {
-    cout << "1에 100까 랜덤한 정수 10개를 출력합니다" << endl;
+    cout << "1에 100까지 랜덤한 정수 10개를 출력합니다" << endl;
     for(int i = 0 ; i < 10 ; i++)
     cout << Random::nextInt(1, 100) << " ";
     cout << endl;
