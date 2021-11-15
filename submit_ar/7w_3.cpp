@@ -4,7 +4,6 @@ using namespace std;
 class Random {
 public:
     static void seed() { srand((unsigned)time(0)); }
-    
     static int nextInt(int min = 0, int max = 32767);
     static char nextAlphabet();
     static double nextDouble();
@@ -12,20 +11,30 @@ public:
 
 char Random::nextAlphabet()
 {
-
+    char a = rand() % 2;
+    if(a == 0)
+    {
+        a = (rand() % 26) + 65;
+        return a;
+    }
+    else
+    {
+        a = (rand() % 26) + 65;
+        return a;
+    }
 }
 
 int Random::nextInt(int min, int max)
 {
-    return seed() % 1;
+    int a = rand() % (max - min + 1) + min;
+    return a;
 }
 
 double Random::nextDouble()
 {
-
+    double a = rand() / (double)(32767 + 1);
+    return a;
 }
-
-
 
 int main()
 {
