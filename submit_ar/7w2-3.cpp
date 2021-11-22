@@ -3,7 +3,7 @@ using namespace std;
 
 class Person {
 private:
-    static int numPerson;ı
+    static int numPerson;
     int id;
     double weight;
     string name;
