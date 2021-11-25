@@ -69,7 +69,8 @@
     "deque": "cpp",
     "fstream": "cpp",
     "stack": "cpp",
-    "filesystem": "cpp"
+    "filesystem": "cpp",
+    "__bits": "cpp"
   },
   "C_Cpp.errorSquiggles": "Disabled",
   "C_Cpp_Runner.cCompilerPath": "/bin/gcc",
